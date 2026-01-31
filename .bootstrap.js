@@ -77,15 +77,7 @@ function updateWranglerJsonc() {
 }
 
 function runSetupCommands() {
-    const commands = [
-    "bun add @dnd-kit/utilities@^3.2.2",
-    "bun add canvas-confetti@^1.9.3",
-    "bun add canvas-confetti",
-    "bun add zod @hookform/resolvers",
-    "bun add react-resizable-panels",
-    "bun add lucide-react",
-    "bun add react-resizable-panels@^3.0.3"
-];
+    const commands = [];
     
     if (commands.length === 0) {
         console.log('⊘ No setup commands to run');
