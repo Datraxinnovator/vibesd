@@ -1,7 +1,6 @@
 import OpenAI from 'openai';
 import type { Message, ToolCall, ChatState } from './types';
 import { getToolDefinitions, executeTool } from './tools';
-import { ChatCompletionMessageFunctionToolCall } from 'openai/resources/index.mjs';
 import { Stream } from 'openai/streaming';
 export class ChatHandler {
   private client: OpenAI;
@@ -38,21 +37,22 @@ export class ChatHandler {
       options.tool_choice = 'auto';
     }
     if (onChunk) {
-      const stream = await this.client.chat.completions.create(options) as Stream<OpenAI.Chat.Completions.ChatCompletionChunk>;
+      // Use double-casting to resolve TS2352 when stream is dynamically set in options
+      const stream = await this.client.chat.completions.create(options) as unknown as Stream<OpenAI.Chat.Completions.ChatCompletionChunk>;
       return this.handleStreamResponse(stream, message, conversationHistory, onChunk, agentState?.systemPrompt);
     }
     const completion = await this.client.chat.completions.create(options);
     return this.handleNonStreamResponse(completion as OpenAI.Chat.Completions.ChatCompletion, message, conversationHistory, agentState?.systemPrompt);
   }
   private async handleStreamResponse(
-    stream: AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
+    stream: Stream<OpenAI.Chat.Completions.ChatCompletionChunk>,
     message: string,
     conversationHistory: Message[],
     onChunk: (chunk: string) => void,
     systemPrompt?: string
   ) {
     let fullContent = '';
-    const accumulatedToolCalls: ChatCompletionMessageFunctionToolCall[] = [];
+    const accumulatedToolCalls: OpenAI.Chat.Completions.ChatCompletionMessageToolCall[] = [];
     for await (const chunk of stream) {
       const delta = chunk.choices[0]?.delta;
       if (delta?.content) {
@@ -60,17 +60,17 @@ export class ChatHandler {
         onChunk(delta.content);
       }
       if (delta?.tool_calls) {
-        for (let i = 0; i < delta.tool_calls.length; i++) {
-          const dtc = delta.tool_calls[i];
-          if (!accumulatedToolCalls[i]) {
-            accumulatedToolCalls[i] = {
-              id: dtc.id || `tool_${Date.now()}_${i}`,
+        for (const dtc of delta.tool_calls) {
+          const index = dtc.index;
+          if (!accumulatedToolCalls[index]) {
+            accumulatedToolCalls[index] = {
+              id: dtc.id || `tool_${Date.now()}_${index}`,
               type: 'function',
               function: { name: dtc.function?.name || '', arguments: dtc.function?.arguments || '' }
-            } as ChatCompletionMessageFunctionToolCall;
+            } as OpenAI.Chat.Completions.ChatCompletionMessageToolCall;
           } else {
-            if (dtc.function?.name) accumulatedToolCalls[i].function.name = dtc.function.name;
-            if (dtc.function?.arguments) accumulatedToolCalls[i].function.arguments += dtc.function.arguments;
+            if (dtc.function?.name) accumulatedToolCalls[index].function.name = dtc.function.name;
+            if (dtc.function?.arguments) accumulatedToolCalls[index].function.arguments += dtc.function.arguments;
           }
         }
       }
@@ -91,11 +91,11 @@ export class ChatHandler {
     const responseMessage = completion.choices[0]?.message;
     if (!responseMessage) return { content: 'Issue processing request.' };
     if (!responseMessage.tool_calls) return { content: responseMessage.content || 'No response.' };
-    const toolCalls = await this.executeToolCalls(responseMessage.tool_calls as ChatCompletionMessageFunctionToolCall[]);
+    const toolCalls = await this.executeToolCalls(responseMessage.tool_calls);
     const finalResponse = await this.generateToolResponse(message, conversationHistory, responseMessage.tool_calls, toolCalls, systemPrompt);
     return { content: finalResponse, toolCalls };
   }
-  private async executeToolCalls(openAiToolCalls: ChatCompletionMessageFunctionToolCall[]): Promise<ToolCall[]> {
+  private async executeToolCalls(openAiToolCalls: OpenAI.Chat.Completions.ChatCompletionMessageToolCall[]): Promise<ToolCall[]> {
     return Promise.all(openAiToolCalls.map(async (tc) => {
       try {
         const args = tc.function.arguments ? JSON.parse(tc.function.arguments) : {};
@@ -117,7 +117,7 @@ export class ChatHandler {
       model: this.model,
       messages: [
         { role: 'system', content: systemPrompt || 'You are a Vox0-ki Intelligence Engine.' },
-        ...history.slice(-5).map(m => ({ role: m.role, content: m.content })),
+        ...history.slice(-5).map(m => ({ role: m.role as any, content: m.content })),
         { role: 'user', content: userMessage },
         { role: 'assistant', content: null, tool_calls: openAiToolCalls },
         ...toolResults.map((result, index) => ({
@@ -133,7 +133,7 @@ export class ChatHandler {
   private buildConversationMessages(userMessage: string, history: Message[], systemPrompt?: string) {
     return [
       { role: 'system' as const, content: systemPrompt || 'You are a Vox0-ki Intelligence Engine.' },
-      ...history.slice(-10).map(m => ({ role: m.role, content: m.content })),
+      ...history.slice(-10).map(m => ({ role: m.role as any, content: m.content })),
       { role: 'user' as const, content: userMessage }
     ];
   }
