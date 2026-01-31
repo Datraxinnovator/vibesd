@@ -1,81 +1,81 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, Zap, Shield, Cpu, ArrowRight } from 'lucide-react';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { Toaster } from '@/components/ui/sonner';
 export function HomePage() {
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary/20">
-      <ThemeToggle />
+    <div className="min-h-screen bg-black text-foreground selection:bg-primary/20 selection:text-black">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-rainbow opacity-5 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-mesh opacity-40 pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 lg:py-40">
-          <div className="text-center space-y-8 animate-fade-in">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-sm font-medium mb-4">
-              <Sparkles className="w-4 h-4 text-primary" />
-              <span>Next-Gen Agent Builder is live</span>
+          <div className="relative z-10 text-center space-y-8 animate-fade-in">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/5 text-sm font-bold text-primary mb-4 backdrop-blur-sm">
+              <Sparkles className="w-4 h-4" />
+              <span>THE GOLD STANDARD OF AI</span>
             </div>
             <h1 className="text-display font-bold tracking-tight">
-              Build Intelligent <span className="text-gradient">AI Agents</span> <br />
-              Without Writing Code
+              Forge Elite <span className="text-gradient">AI Agents</span> <br />
+              with Precision
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto text-pretty">
-              AgentForge empowers you to design, deploy, and scale autonomous AI agents 
-              equipped with powerful tools and modern language models in seconds.
+            <p className="text-xl text-zinc-400 max-w-2xl mx-auto text-pretty">
+              The premier platform for architecting intelligent, autonomous agents. 
+              Built for performance, polished for luxury.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-              <Button asChild size="lg" className="btn-gradient px-8 py-6 text-lg rounded-xl">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-8">
+              <Button asChild size="lg" className="btn-gradient px-10 py-7 text-lg rounded-2xl">
                 <Link to="/login" className="flex items-center gap-2">
-                  Start Building Now <ArrowRight className="w-5 h-5" />
+                  Launch Your Forge <ArrowRight className="w-5 h-5" />
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" className="px-8 py-6 text-lg rounded-xl border-white/10 hover:bg-white/5">
-                View Templates
+              <Button variant="outline" size="lg" className="px-10 py-7 text-lg rounded-2xl border-primary/20 bg-black/40 hover:bg-primary/5 hover:border-primary/40 text-primary transition-all">
+                Explore Showcase
               </Button>
             </div>
           </div>
         </div>
       </div>
       {/* Feature Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 border-t border-white/5">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 border-t border-primary/10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          <FeatureCard 
+          <FeatureCard
             icon={<Cpu className="w-6 h-6" />}
-            title="Multi-Model Support"
-            description="Choose from Gemini, GPT-4o, and specialized open-source models for your agent's core brain."
+            title="Elite Intelligence"
+            description="Leverage top-tier models from Gemini and OpenAI, fine-tuned for high-performance agentic workflows."
           />
-          <FeatureCard 
+          <FeatureCard
             icon={<Zap className="w-6 h-6" />}
-            title="Instant Toolkits"
-            description="Easily enable Web Search, D1 Database access, and custom MCP tools with simple toggles."
+            title="Instant Capability"
+            description="Toggle advanced toolsets including real-time search and database access with a single touch."
           />
-          <FeatureCard 
+          <FeatureCard
             icon={<Shield className="w-6 h-6" />}
-            title="Production Ready"
-            description="Deploy agents directly to Cloudflare Workers with built-in observability and state persistence."
+            title="Premium Hosting"
+            description="Global deployment on the edge with unmatched speed and military-grade persistence."
           />
         </div>
       </div>
-      <footer className="py-12 border-t border-white/5 text-center text-sm text-muted-foreground">
-        <p>© 2025 AgentForge Builder. Built on Cloudflare Agents.</p>
-        <p className="mt-2 text-xs opacity-60">
-          Note: AI request limits apply based on global server capacity.
-        </p>
+      <footer className="py-12 border-t border-primary/10 text-center text-sm text-zinc-500 bg-black">
+        <div className="max-w-7xl mx-auto px-4">
+          <p className="font-medium text-primary/80">© 2025 AgentForge Builder. The Premium AI Workspace.</p>
+          <p className="mt-2 text-xs opacity-50">
+            AI capacity is subject to global availability. High-priority routing enabled for pro members.
+          </p>
+        </div>
       </footer>
-      <Toaster richColors closeButton />
+      <Toaster richColors closeButton theme="dark" />
     </div>
   );
 }
 function FeatureCard({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) {
   return (
-    <div className="space-y-4 p-6 rounded-2xl border border-white/5 bg-card/50 backdrop-blur-sm hover:border-primary/30 transition-colors">
-      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+    <div className="space-y-4 p-8 rounded-3xl border border-primary/10 bg-zinc-950/50 backdrop-blur-sm hover:border-primary/30 hover:bg-zinc-950 transition-all group">
+      <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform shadow-glow">
         {icon}
       </div>
-      <h3 className="text-xl font-semibold">{title}</h3>
-      <p className="text-muted-foreground leading-relaxed">{description}</p>
+      <h3 className="text-2xl font-bold text-white">{title}</h3>
+      <p className="text-zinc-400 leading-relaxed">{description}</p>
     </div>
   );
 }

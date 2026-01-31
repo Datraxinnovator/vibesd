@@ -4,7 +4,7 @@ import { useAgentStore, useAuthStore } from '@/lib/store';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Settings2, Trash2, Cpu, Clock, Search } from 'lucide-react';
+import { Plus, Settings2, Trash2, Cpu, Clock, Search, Sparkles } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
@@ -12,82 +12,91 @@ export function DashboardPage() {
   const agents = useAgentStore((s) => s.agents);
   const addAgent = useAgentStore((s) => s.addAgent);
   const deleteAgent = useAgentStore((s) => s.deleteAgent);
-  const user = useAuthStore((s) => s.user);
+  const userEmail = useAuthStore((s) => s.user?.email);
+  const userName = useAuthStore((s) => s.user?.name);
   const navigate = useNavigate();
   const handleCreateAgent = () => {
     const id = crypto.randomUUID();
     addAgent({
       id,
-      name: 'New Agent',
-      role: 'Assistant',
-      systemPrompt: 'You are a helpful assistant.',
+      name: 'New Elite Agent',
+      role: 'Intelligence Officer',
+      systemPrompt: 'You are a high-performance AI assistant.',
       model: 'google-ai-studio/gemini-2.5-flash',
       tools: [],
       lastEdited: Date.now(),
     });
-    toast.success('Agent created');
+    toast.success('Agent initialized in the forge');
     navigate(`/builder/${id}`);
   };
   return (
-    <AppLayout container>
-      <div className="space-y-8 animate-fade-in">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <AppLayout container className="bg-black">
+      <div className="space-y-10 animate-fade-in">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-primary/10 pb-8">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Welcome, {user?.name || 'Builder'}</h1>
-            <p className="text-muted-foreground">Manage and monitor your autonomous AI agents.</p>
+            <div className="flex items-center gap-2 text-primary font-bold text-sm mb-2 uppercase tracking-widest">
+              <Sparkles className="w-4 h-4" /> User Workspace
+            </div>
+            <h1 className="text-4xl font-bold tracking-tight text-white">Welcome, <span className="text-gradient">{userName || 'Builder'}</span></h1>
+            <p className="text-zinc-400 mt-1">Orchestrate your fleet of autonomous AI workers.</p>
           </div>
-          <Button onClick={handleCreateAgent} className="btn-gradient px-6 py-6 rounded-xl font-semibold">
-            <Plus className="w-5 h-5 mr-2" /> Create New Agent
+          <Button onClick={handleCreateAgent} className="btn-gradient px-8 py-7 rounded-2xl shadow-glow">
+            <Plus className="w-5 h-5 mr-2" /> New Elite Agent
           </Button>
         </div>
-        <div className="flex items-center gap-4 bg-secondary/30 p-2 rounded-xl border border-white/5">
+        <div className="flex items-center gap-4 bg-zinc-900/50 p-1.5 rounded-2xl border border-primary/10 backdrop-blur-xl">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input 
-              placeholder="Search agents..." 
-              className="pl-10 bg-transparent border-none focus-visible:ring-0" 
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/60" />
+            <Input
+              placeholder="Filter by agent name or role..."
+              className="pl-12 bg-transparent border-none focus-visible:ring-0 text-white placeholder:text-zinc-600"
             />
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {agents.map((agent) => (
-            <Card key={agent.id} className="group overflow-hidden border-white/10 bg-card/40 backdrop-blur-sm hover:border-primary/50 transition-all">
-              <CardHeader>
+            <Card key={agent.id} className="group overflow-hidden border-primary/10 bg-zinc-950/40 backdrop-blur-md hover:border-primary/40 hover:shadow-glow transition-all duration-300">
+              <CardHeader className="pb-4">
                 <div className="flex items-start justify-between">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                    <Cpu className="w-5 h-5" />
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-inner border border-primary/20">
+                    <Cpu className="w-6 h-6" />
                   </div>
-                  <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 border-emerald-500/20">
-                    Active
+                  <Badge className="bg-black border border-primary/40 text-primary hover:bg-primary hover:text-black font-bold px-3">
+                    OPERATIONAL
                   </Badge>
                 </div>
-                <CardTitle className="mt-4">{agent.name}</CardTitle>
-                <CardDescription className="line-clamp-1">{agent.role}</CardDescription>
+                <CardTitle className="mt-6 text-xl text-white group-hover:text-primary transition-colors">{agent.name}</CardTitle>
+                <CardDescription className="text-zinc-500 font-medium">{agent.role}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
+                <div className="flex items-center gap-6 text-xs text-zinc-400 font-mono">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-primary/60" />
                     {new Date(agent.lastEdited).toLocaleDateString()}
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Settings2 className="w-4 h-4" />
-                    {agent.tools.length} Tools
+                  <div className="flex items-center gap-2">
+                    <Settings2 className="w-4 h-4 text-primary/60" />
+                    {agent.tools.length} CAPABILITIES
                   </div>
                 </div>
               </CardContent>
-              <CardFooter className="bg-secondary/20 border-t border-white/5 flex justify-between gap-2 p-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button variant="ghost" size="sm" onClick={() => navigate(`/builder/${agent.id}`)} className="flex-1">
-                  Edit Agent
-                </Button>
+              <CardFooter className="bg-primary/5 border-t border-primary/10 flex justify-between gap-3 p-4">
                 <Button 
                   variant="ghost" 
-                  size="icon" 
+                  size="sm" 
+                  onClick={() => navigate(`/builder/${agent.id}`)} 
+                  className="flex-1 border border-primary/20 hover:bg-primary hover:text-black font-bold rounded-xl"
+                >
+                  Enter Builder
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => {
                     deleteAgent(agent.id);
-                    toast.info('Agent deleted');
-                  }} 
-                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    toast.info('Agent decommissioned');
+                  }}
+                  className="text-zinc-500 hover:text-red-500 hover:bg-red-500/10 rounded-xl"
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
@@ -96,8 +105,12 @@ export function DashboardPage() {
           ))}
         </div>
         {agents.length === 0 && (
-          <div className="text-center py-20 bg-secondary/20 rounded-3xl border border-dashed border-white/10">
-            <p className="text-muted-foreground">No agents found. Start by creating your first AI worker!</p>
+          <div className="text-center py-32 bg-zinc-950/40 rounded-[3rem] border border-dashed border-primary/20 flex flex-col items-center">
+            <div className="w-20 h-20 rounded-full bg-primary/5 flex items-center justify-center mb-6 text-primary/30">
+              <Cpu className="w-10 h-10" />
+            </div>
+            <p className="text-zinc-500 text-lg font-medium">Your forge is currently silent.</p>
+            <Button variant="link" onClick={handleCreateAgent} className="text-primary mt-2">Create your first intelligence →</Button>
           </div>
         )}
       </div>

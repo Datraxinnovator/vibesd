@@ -5,7 +5,7 @@ import { Message } from '../../../worker/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Send, Bot, User, Loader2 } from 'lucide-react';
+import { Send, Bot, User, Loader2, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 interface ChatPreviewProps {
   agent: AgentConfig;
@@ -16,7 +16,6 @@ export function ChatPreview({ agent }: ChatPreviewProps) {
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    // Switch to agent's session or create one
     chatService.switchSession(agent.id);
     loadMessages();
   }, [agent.id]);
@@ -53,71 +52,79 @@ export function ChatPreview({ agent }: ChatPreviewProps) {
     }
   };
   return (
-    <div className="flex flex-col h-full overflow-hidden">
-      <div className="h-10 border-b border-white/5 px-4 flex items-center bg-secondary/10">
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-2xs font-mono text-muted-foreground uppercase tracking-tighter">Live Preview Mode</span>
+    <div className="flex flex-col h-full overflow-hidden bg-black">
+      <div className="h-12 border-b border-primary/10 px-6 flex items-center bg-zinc-950/80 backdrop-blur-md">
+        <div className="flex items-center gap-3">
+          <div className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse shadow-[0_0_10px_rgba(255,215,0,0.8)]" />
+          <span className="text-xs font-black text-primary uppercase tracking-[0.2em]">Live Intelligence Stream</span>
         </div>
       </div>
-      <ScrollArea className="flex-1 p-4">
-        <div className="space-y-6 max-w-2xl mx-auto">
+      <ScrollArea className="flex-1 px-6 py-8">
+        <div className="space-y-8 max-w-3xl mx-auto">
           {messages.length === 0 && !isTyping && (
-            <div className="py-12 text-center space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto text-primary">
-                <Bot className="w-6 h-6" />
+            <div className="py-20 text-center space-y-6">
+              <div className="w-20 h-20 rounded-3xl bg-primary/5 border border-primary/20 flex items-center justify-center mx-auto text-primary shadow-inner">
+                <Sparkles className="w-10 h-10" />
               </div>
-              <div>
-                <h4 className="font-semibold">Test {agent.name}</h4>
-                <p className="text-sm text-muted-foreground">Send a message to see how your agent behaves with the current config.</p>
+              <div className="space-y-2">
+                <h4 className="text-2xl font-bold text-white tracking-tight">Challenge {agent.name}</h4>
+                <p className="text-zinc-500 max-w-sm mx-auto">
+                  Execute initial prompts to calibrate the behavior and intelligence of your new elite agent.
+                </p>
               </div>
             </div>
           )}
           {messages.map((m) => (
-            <div key={m.id} className={cn("flex gap-3", m.role === 'user' ? "flex-row-reverse" : "flex-row")}>
-              <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center shrink-0", 
-                m.role === 'user' ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground")}>
-                {m.role === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+            <div key={m.id} className={cn("flex gap-4 items-end animate-fade-in", m.role === 'user' ? "flex-row-reverse" : "flex-row")}>
+              <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-lg",
+                m.role === 'user' ? "bg-primary text-black border border-primary/40" : "bg-zinc-900 text-primary border border-primary/10")}>
+                {m.role === 'user' ? <User className="w-5 h-5" /> : <Bot className="w-5 h-5" />}
               </div>
-              <div className={cn("max-w-[80%] p-3 rounded-2xl text-sm leading-relaxed",
-                m.role === 'user' ? "bg-primary/10 text-foreground rounded-tr-none" : "bg-secondary/50 text-foreground rounded-tl-none border border-white/5")}>
+              <div className={cn("max-w-[80%] p-5 rounded-[1.5rem] text-sm leading-relaxed font-medium shadow-2xl",
+                m.role === 'user' 
+                  ? "bg-primary text-black rounded-br-none" 
+                  : "bg-zinc-900/60 text-white rounded-bl-none border border-primary/10 backdrop-blur-sm")}>
                 {m.content}
               </div>
             </div>
           ))}
           {isTyping && (
-            <div className="flex gap-3">
-              <div className="w-8 h-8 rounded-lg bg-secondary text-secondary-foreground flex items-center justify-center">
-                <Loader2 className="w-4 h-4 animate-spin" />
+            <div className="flex gap-4 animate-pulse">
+              <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-primary/20 flex items-center justify-center shadow-lg">
+                <Loader2 className="w-5 h-5 animate-spin text-primary" />
               </div>
-              <div className="bg-secondary/50 p-3 rounded-2xl rounded-tl-none border border-white/5">
-                <div className="flex gap-1">
-                  <div className="w-1.5 h-1.5 bg-muted-foreground/30 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <div className="w-1.5 h-1.5 bg-muted-foreground/30 rounded-full animate-bounce" style={{ animationDelay: '200ms' }} />
-                  <div className="w-1.5 h-1.5 bg-muted-foreground/30 rounded-full animate-bounce" style={{ animationDelay: '400ms' }} />
+              <div className="bg-zinc-900/60 p-5 rounded-[1.5rem] rounded-bl-none border border-primary/10">
+                <div className="flex gap-1.5">
+                  <div className="w-2 h-2 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <div className="w-2 h-2 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: '200ms' }} />
+                  <div className="w-2 h-2 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '400ms' }} />
                 </div>
               </div>
             </div>
           )}
-          <div ref={scrollRef} />
+          <div ref={scrollRef} className="h-4" />
         </div>
       </ScrollArea>
-      <div className="p-4 border-t border-white/10 bg-card/30">
-        <form onSubmit={handleSend} className="max-w-2xl mx-auto flex gap-2">
-          <Input 
-            placeholder={`Message ${agent.name}...`} 
+      <div className="p-6 border-t border-primary/10 bg-zinc-950/80 backdrop-blur-xl">
+        <form onSubmit={handleSend} className="max-w-3xl mx-auto flex gap-4">
+          <Input
+            placeholder={`Execute prompt for ${agent.name}...`}
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            className="bg-secondary/50 border-white/5"
+            className="bg-zinc-900/80 border-primary/10 h-14 rounded-2xl focus-visible:ring-primary/40 text-white placeholder:text-zinc-600"
             disabled={isTyping}
           />
-          <Button type="submit" size="icon" disabled={isTyping || !input.trim()} className="btn-gradient shrink-0">
-            <Send className="w-4 h-4" />
+          <Button type="submit" size="icon" disabled={isTyping || !input.trim()} className="btn-gradient w-14 h-14 rounded-2xl shadow-glow shrink-0">
+            <Send className="w-6 h-6" />
           </Button>
         </form>
-        <p className="text-[10px] text-center mt-2 text-muted-foreground">
-          Previews use actual AI credits. Limits apply.
-        </p>
+        <div className="flex items-center justify-center gap-2 mt-4">
+          <div className="w-1 h-1 rounded-full bg-primary/40" />
+          <p className="text-[10px] uppercase font-black tracking-widest text-zinc-700">
+            Elite Protocol Active • High Priority Routing
+          </p>
+          <div className="w-1 h-1 rounded-full bg-primary/40" />
+        </div>
       </div>
     </div>
   );

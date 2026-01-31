@@ -2,7 +2,7 @@ import React from 'react';
 import { AgentConfig, useAgentStore } from '@/lib/store';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Search, CloudSun, Database, Code, Globe } from 'lucide-react';
+import { Search, CloudSun, Database, Code, Globe, Zap } from 'lucide-react';
 interface ToolDef {
   id: string;
   name: string;
@@ -10,10 +10,10 @@ interface ToolDef {
   icon: React.ReactNode;
 }
 const AVAILABLE_TOOLS: ToolDef[] = [
-  { id: 'web_search', name: 'Web Search', description: 'Real-time browsing via SerpAPI', icon: <Search className="w-4 h-4" /> },
-  { id: 'get_weather', name: 'Weather Service', description: 'Global forecasts and current conditions', icon: <CloudSun className="w-4 h-4" /> },
-  { id: 'd1_db', name: 'D1 Database', description: 'Persistent SQL storage at the edge', icon: <Database className="w-4 h-4" /> },
-  { id: 'mcp_server', name: 'MCP Integration', description: 'Connect external Model Context tools', icon: <Globe className="w-4 h-4" /> },
+  { id: 'web_search', name: 'Web Oracle', description: 'Advanced real-time web intelligence', icon: <Search className="w-4 h-4" /> },
+  { id: 'get_weather', name: 'Meteo Stream', description: 'Precise global climate analytics', icon: <CloudSun className="w-4 h-4" /> },
+  { id: 'd1_db', name: 'D1 Matrix', description: 'Hyper-fast SQL storage at the edge', icon: <Database className="w-4 h-4" /> },
+  { id: 'mcp_server', name: 'MCP Bridge', description: 'Seamless external protocol integration', icon: <Globe className="w-4 h-4" /> },
 ];
 interface CapabilitiesPanelProps {
   agent: AgentConfig;
@@ -31,46 +31,56 @@ export function CapabilitiesPanel({ agent }: CapabilitiesPanelProps) {
     updateAgent(agent.id, { tools: currentTools });
   };
   return (
-    <div className="p-6 space-y-8">
-      <div>
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">Core Tools</h3>
-        <div className="space-y-3">
+    <div className="p-8 space-y-10">
+      <div className="space-y-6">
+        <div className="flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-[0.3em]">
+          <Zap className="w-3 h-3" /> Capability Core
+        </div>
+        <div className="space-y-4">
           {AVAILABLE_TOOLS.map((tool) => (
-            <div 
-              key={tool.id} 
-              className={`p-4 rounded-xl border transition-all ${
-                agent.tools.includes(tool.id) 
-                  ? 'bg-primary/5 border-primary/30 shadow-sm' 
-                  : 'bg-card/50 border-white/5 opacity-70 grayscale-[0.5]'
+            <div
+              key={tool.id}
+              className={`p-5 rounded-2xl border transition-all duration-300 ${
+                agent.tools.includes(tool.id)
+                  ? 'bg-primary/10 border-primary/40 shadow-[0_0_15px_rgba(255,215,0,0.1)]'
+                  : 'bg-zinc-950 border-primary/5 opacity-50 grayscale-[0.8]'
               }`}
             >
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                    agent.tools.includes(tool.id) ? 'bg-primary/20 text-primary' : 'bg-secondary text-muted-foreground'
+              <div className="flex items-center justify-between gap-6">
+                <div className="flex items-center gap-4">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-colors ${
+                    agent.tools.includes(tool.id) 
+                      ? 'bg-primary/20 text-primary border-primary/40' 
+                      : 'bg-zinc-900 text-zinc-600 border-zinc-800'
                   }`}>
                     {tool.icon}
                   </div>
                   <div>
-                    <Label htmlFor={tool.id} className="font-semibold cursor-pointer">{tool.name}</Label>
-                    <p className="text-2xs text-muted-foreground">{tool.description}</p>
+                    <Label htmlFor={tool.id} className="font-bold text-white cursor-pointer group-hover:text-primary transition-colors">{tool.name}</Label>
+                    <p className="text-[10px] text-zinc-500 uppercase tracking-tighter font-bold">{tool.description}</p>
                   </div>
                 </div>
-                <Switch 
-                  id={tool.id} 
-                  checked={agent.tools.includes(tool.id)} 
+                <Switch
+                  id={tool.id}
+                  checked={agent.tools.includes(tool.id)}
                   onCheckedChange={() => toggleTool(tool.id)}
+                  className="data-[state=checked]:bg-primary"
                 />
               </div>
             </div>
           ))}
         </div>
       </div>
-      <div>
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">Custom Integrations</h3>
-        <div className="p-4 rounded-xl border border-dashed border-white/10 bg-white/2 text-center">
-          <Code className="w-6 h-6 mx-auto mb-2 text-muted-foreground/50" />
-          <p className="text-xs text-muted-foreground">Advanced API integrations coming soon</p>
+      <div className="pt-6 border-t border-primary/10">
+        <div className="flex items-center gap-2 text-zinc-600 font-black text-[10px] uppercase tracking-[0.3em] mb-6">
+          <Code className="w-3 h-3" /> Custom Protocols
+        </div>
+        <div className="p-8 rounded-3xl border border-dashed border-primary/10 bg-zinc-950/40 text-center group cursor-not-allowed">
+          <div className="w-12 h-12 rounded-full bg-zinc-900 flex items-center justify-center mx-auto mb-4 text-zinc-700 group-hover:text-primary/40 transition-colors">
+            <Plus className="w-6 h-6" />
+          </div>
+          <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest">Enterprise API Connector</p>
+          <p className="text-[10px] text-zinc-700 mt-1 uppercase font-bold tracking-tighter">Coming in Next Phase</p>
         </div>
       </div>
     </div>
