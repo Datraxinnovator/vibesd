@@ -35,7 +35,7 @@ export const useAuthStore = create<AuthState>()(
       login: (user) => set({ user, isAuthenticated: true }),
       logout: () => set({ user: null, isAuthenticated: false }),
     }),
-    { name: 'agent-forge-auth' }
+    { name: 'vox0-ki-auth' }
   )
 );
 export const useAgentStore = create<AgentState>()(
@@ -43,10 +43,10 @@ export const useAgentStore = create<AgentState>()(
     (set, get) => ({
       agents: [
         {
-          id: 'default-1',
-          name: 'Research Assistant',
-          role: 'Researcher',
-          systemPrompt: 'You are a professional research assistant. Use web search to find accurate data.',
+          id: 'vox-1',
+          name: 'Vox0-ki Research Strategist',
+          role: 'Intelligence Architect',
+          systemPrompt: 'You are a Vox0-ki Intelligence Engine. Execute all directives with extreme precision and utilize premium protocols.',
           model: 'google-ai-studio/gemini-2.5-flash',
           tools: ['web_search'],
           lastEdited: Date.now(),
@@ -65,6 +65,6 @@ export const useAgentStore = create<AgentState>()(
         })),
       getAgent: (id) => get().agents.find((a) => a.id === id),
     }),
-    { name: 'agent-forge-agents' }
+    { name: 'vox0-ki-agents' }
   )
 );

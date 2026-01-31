@@ -31,9 +31,9 @@ export function AuthPage() {
             <Sparkles className="w-12 h-12 text-black" />
           </div>
           <div className="space-y-4">
-            <h2 className="text-5xl font-display font-bold text-white tracking-tight">The Future is <span className="text-primary">Golden</span></h2>
+            <h2 className="text-5xl font-display font-bold text-white tracking-tight">Vox0-ki <span className="text-primary">Sovereign</span></h2>
             <p className="text-zinc-500 text-lg max-w-md mx-auto leading-relaxed">
-              Step into the world's most sophisticated AI builder. Pure power, wrapped in elegance.
+              Step into the world's most sophisticated AI forge. Pure power, wrapped in elegance.
             </p>
           </div>
           <div className="flex items-center justify-center gap-8 pt-8">
@@ -63,8 +63,8 @@ export function AuthPage() {
             <div className="w-12 h-12 rounded-xl bg-zinc-900 flex items-center justify-center mx-auto mb-2 text-primary border border-primary/20">
               <ShieldCheck className="w-6 h-6" />
             </div>
-            <CardTitle className="text-3xl font-bold text-white">Identity Access</CardTitle>
-            <CardDescription className="text-zinc-500">Secure entry to the AgentForge Control Plane</CardDescription>
+            <CardTitle className="text-3xl font-bold text-white">Neural Gateway</CardTitle>
+            <CardDescription className="text-zinc-500">Secure entry to the Vox0-ki Control Plane</CardDescription>
           </CardHeader>
           <CardContent className="pt-4">
             <form onSubmit={handleLogin} className="space-y-5">

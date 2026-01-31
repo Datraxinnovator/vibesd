@@ -16,11 +16,11 @@ export function HomePage() {
               <span>THE GOLD STANDARD OF AI</span>
             </div>
             <h1 className="text-display font-bold tracking-tight">
-              Forge Elite <span className="text-gradient">AI Agents</span> <br />
-              with Precision
+              Architect Elite <span className="text-gradient">Vox0-ki</span> <br />
+              Intelligence
             </h1>
             <p className="text-xl text-zinc-400 max-w-2xl mx-auto text-pretty">
-              The premier platform for architecting intelligent, autonomous agents. 
+              The premier platform for architecting sovereign, autonomous intelligence.
               Built for performance, polished for luxury.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-8">
@@ -42,7 +42,7 @@ export function HomePage() {
           <FeatureCard
             icon={<Cpu className="w-6 h-6" />}
             title="Elite Intelligence"
-            description="Leverage top-tier models from Gemini and OpenAI, fine-tuned for high-performance agentic workflows."
+            description="Leverage top-tier models from Gemini and OpenAI, fine-tuned for high-performance Vox0-ki workflows."
           />
           <FeatureCard
             icon={<Zap className="w-6 h-6" />}
@@ -51,14 +51,14 @@ export function HomePage() {
           />
           <FeatureCard
             icon={<Shield className="w-6 h-6" />}
-            title="Premium Hosting"
+            title="Sovereign Hosting"
             description="Global deployment on the edge with unmatched speed and military-grade persistence."
           />
         </div>
       </div>
       <footer className="py-12 border-t border-primary/10 text-center text-sm text-zinc-500 bg-black">
         <div className="max-w-7xl mx-auto px-4">
-          <p className="font-medium text-primary/80">© 2025 AgentForge Builder. The Premium AI Workspace.</p>
+          <p className="font-medium text-primary/80">© 2025 Vox0-ki. The Sovereign AI Workspace.</p>
           <p className="mt-2 text-xs opacity-50">
             AI capacity is subject to global availability. High-priority routing enabled for pro members.
           </p>

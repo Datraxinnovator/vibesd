@@ -57,7 +57,7 @@ export function ChatPreview({ agent }: ChatPreviewProps) {
       <div className="h-12 border-b border-primary/10 px-6 flex items-center justify-between bg-zinc-950/80 backdrop-blur-md">
         <div className="flex items-center gap-3">
           <div className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_10px_rgba(255,215,0,0.6)]" />
-          <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Neural Stream v2.5</span>
+          <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Vox0-ki Neural Stream v2.5</span>
         </div>
         {agent.systemPrompt && (
           <Badge variant="outline" className="text-[9px] border-primary/20 text-primary/60 font-mono">
@@ -73,7 +73,7 @@ export function ChatPreview({ agent }: ChatPreviewProps) {
                 <Sparkles className="w-8 h-8" />
               </div>
               <div className="space-y-2">
-                <h4 className="text-xl font-bold text-white tracking-tight">System Initialized</h4>
+                <h4 className="text-xl font-bold text-white tracking-tight">Vox0-ki Initialized</h4>
                 <p className="text-zinc-500 text-xs max-w-xs mx-auto uppercase tracking-tighter font-bold">
                   Testing environment for {agent.name}. Execute first prompt to calibrate intelligence.
                 </p>

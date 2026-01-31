@@ -2,6 +2,7 @@ import OpenAI from 'openai';
 import type { Message, ToolCall, ChatState } from './types';
 import { getToolDefinitions, executeTool } from './tools';
 import { ChatCompletionMessageFunctionToolCall } from 'openai/resources/index.mjs';
+import { Stream } from 'openai/streaming';
 export class ChatHandler {
   private client: OpenAI;
   private model: string;
@@ -37,7 +38,7 @@ export class ChatHandler {
       options.tool_choice = 'auto';
     }
     if (onChunk) {
-      const stream = await this.client.chat.completions.create(options);
+      const stream = await this.client.chat.completions.create(options) as Stream<OpenAI.Chat.Completions.ChatCompletionChunk>;
       return this.handleStreamResponse(stream, message, conversationHistory, onChunk, agentState?.systemPrompt);
     }
     const completion = await this.client.chat.completions.create(options);
@@ -66,7 +67,7 @@ export class ChatHandler {
               id: dtc.id || `tool_${Date.now()}_${i}`,
               type: 'function',
               function: { name: dtc.function?.name || '', arguments: dtc.function?.arguments || '' }
-            };
+            } as ChatCompletionMessageFunctionToolCall;
           } else {
             if (dtc.function?.name) accumulatedToolCalls[i].function.name = dtc.function.name;
             if (dtc.function?.arguments) accumulatedToolCalls[i].function.arguments += dtc.function.arguments;
@@ -115,7 +116,7 @@ export class ChatHandler {
     const followUp = await this.client.chat.completions.create({
       model: this.model,
       messages: [
-        { role: 'system', content: systemPrompt || 'You are a helpful assistant.' },
+        { role: 'system', content: systemPrompt || 'You are a Vox0-ki Intelligence Engine.' },
         ...history.slice(-5).map(m => ({ role: m.role, content: m.content })),
         { role: 'user', content: userMessage },
         { role: 'assistant', content: null, tool_calls: openAiToolCalls },
@@ -131,7 +132,7 @@ export class ChatHandler {
   }
   private buildConversationMessages(userMessage: string, history: Message[], systemPrompt?: string) {
     return [
-      { role: 'system' as const, content: systemPrompt || 'You are a helpful AI assistant.' },
+      { role: 'system' as const, content: systemPrompt || 'You are a Vox0-ki Intelligence Engine.' },
       ...history.slice(-10).map(m => ({ role: m.role, content: m.content })),
       { role: 'user' as const, content: userMessage }
     ];

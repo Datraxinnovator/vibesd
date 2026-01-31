@@ -27,7 +27,7 @@ export function BuilderLayout({ children, agent }: BuilderLayoutProps) {
       }),
       {
         loading: 'Orchestrating intelligence on the global edge...',
-        success: 'Agent deployed successfully to 310+ locations.',
+        success: 'Vox-Unit deployed successfully to 310+ nodes.',
         error: 'Deployment protocol interrupted.',
       }
     );
@@ -51,13 +51,13 @@ export function BuilderLayout({ children, agent }: BuilderLayoutProps) {
                 {agent.name}
               </h2>
               <span className="text-[10px] px-3 py-1 rounded-full bg-black text-primary border border-primary/40 font-black tracking-widest uppercase">
-                DRAFT ARCHITECTURE
+                ACTIVE ARCHITECTURE
               </span>
             </div>
             <div className="flex items-center gap-2 mt-1">
               <ShieldCheck className="w-3 h-3 text-primary/60" />
               <p className="text-[10px] text-zinc-500 font-bold font-mono tracking-tighter uppercase">
-                SECURE SESSION ��� UID-{agent.id.slice(0, 12).toUpperCase()}
+                SECURE VOX-UID-{agent.id.slice(0, 12).toUpperCase()}
               </p>
             </div>
           </div>
@@ -67,7 +67,7 @@ export function BuilderLayout({ children, agent }: BuilderLayoutProps) {
             variant="outline"
             size="sm"
             className="hidden sm:flex border-primary/20 bg-transparent text-primary hover:bg-primary/10 rounded-xl px-6 h-11 font-bold"
-            onClick={() => toast.info('Changes committed to persistent storage.')}
+            onClick={() => toast.info('Protocols committed to persistent storage.')}
           >
             <Save className="w-4 h-4 mr-2" /> Commit
           </Button>

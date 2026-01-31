@@ -12,21 +12,20 @@ export function DashboardPage() {
   const agents = useAgentStore((s) => s.agents);
   const addAgent = useAgentStore((s) => s.addAgent);
   const deleteAgent = useAgentStore((s) => s.deleteAgent);
-  const userEmail = useAuthStore((s) => s.user?.email);
   const userName = useAuthStore((s) => s.user?.name);
   const navigate = useNavigate();
   const handleCreateAgent = () => {
     const id = crypto.randomUUID();
     addAgent({
       id,
-      name: 'New Elite Agent',
+      name: 'New Vox-Unit',
       role: 'Intelligence Officer',
-      systemPrompt: 'You are a high-performance AI assistant.',
+      systemPrompt: 'You are a Vox0-ki Intelligence Engine.',
       model: 'google-ai-studio/gemini-2.5-flash',
       tools: [],
       lastEdited: Date.now(),
     });
-    toast.success('Agent initialized in the forge');
+    toast.success('Vox-Unit initialized in the forge');
     navigate(`/builder/${id}`);
   };
   return (
@@ -35,20 +34,20 @@ export function DashboardPage() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-primary/10 pb-8">
           <div>
             <div className="flex items-center gap-2 text-primary font-bold text-sm mb-2 uppercase tracking-widest">
-              <Sparkles className="w-4 h-4" /> User Workspace
+              <Sparkles className="w-4 h-4" /> Vox0-ki Workspace
             </div>
             <h1 className="text-4xl font-bold tracking-tight text-white">Welcome, <span className="text-gradient">{userName || 'Builder'}</span></h1>
-            <p className="text-zinc-400 mt-1">Orchestrate your fleet of autonomous AI workers.</p>
+            <p className="text-zinc-400 mt-1">Orchestrate your fleet of autonomous sovereign intelligences.</p>
           </div>
           <Button onClick={handleCreateAgent} className="btn-gradient px-8 py-7 rounded-2xl shadow-glow">
-            <Plus className="w-5 h-5 mr-2" /> New Elite Agent
+            <Plus className="w-5 h-5 mr-2" /> New Vox-Unit
           </Button>
         </div>
         <div className="flex items-center gap-4 bg-zinc-900/50 p-1.5 rounded-2xl border border-primary/10 backdrop-blur-xl">
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/60" />
             <Input
-              placeholder="Filter by agent name or role..."
+              placeholder="Filter by unit name or role..."
               className="pl-12 bg-transparent border-none focus-visible:ring-0 text-white placeholder:text-zinc-600"
             />
           </div>
@@ -81,10 +80,10 @@ export function DashboardPage() {
                 </div>
               </CardContent>
               <CardFooter className="bg-primary/5 border-t border-primary/10 flex justify-between gap-3 p-4">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => navigate(`/builder/${agent.id}`)} 
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate(`/builder/${agent.id}`)}
                   className="flex-1 border border-primary/20 hover:bg-primary hover:text-black font-bold rounded-xl"
                 >
                   Enter Builder
@@ -94,7 +93,7 @@ export function DashboardPage() {
                   size="icon"
                   onClick={() => {
                     deleteAgent(agent.id);
-                    toast.info('Agent decommissioned');
+                    toast.info('Unit decommissioned');
                   }}
                   className="text-zinc-500 hover:text-red-500 hover:bg-red-500/10 rounded-xl"
                 >
@@ -110,7 +109,7 @@ export function DashboardPage() {
               <Cpu className="w-10 h-10" />
             </div>
             <p className="text-zinc-500 text-lg font-medium">Your forge is currently silent.</p>
-            <Button variant="link" onClick={handleCreateAgent} className="text-primary mt-2">Create your first intelligence →</Button>
+            <Button variant="link" onClick={handleCreateAgent} className="text-primary mt-2">Initialize your first unit →</Button>
           </div>
         )}
       </div>
