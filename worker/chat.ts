@@ -23,7 +23,6 @@ export class ChatHandler {
   }> {
     const messages = this.buildConversationMessages(message, conversationHistory, agentState?.systemPrompt);
     const allToolDefinitions = await getToolDefinitions();
-    // Filter tools based on agent configuration
     const enabledTools = agentState?.enabledTools || [];
     const toolDefinitions = allToolDefinitions.filter(td => enabledTools.includes(td.function.name));
     const options: any = {
@@ -37,7 +36,6 @@ export class ChatHandler {
       options.tool_choice = 'auto';
     }
     if (onChunk) {
-      // Use double-casting to resolve TS2352 when stream is dynamically set in options
       const stream = await this.client.chat.completions.create(options) as unknown as Stream<OpenAI.Chat.Completions.ChatCompletionChunk>;
       return this.handleStreamResponse(stream, message, conversationHistory, onChunk, agentState?.systemPrompt);
     }
@@ -52,7 +50,7 @@ export class ChatHandler {
     systemPrompt?: string
   ) {
     let fullContent = '';
-    const accumulatedToolCalls: OpenAI.Chat.Completions.ChatCompletionMessageToolCall[] = [];
+    const accumulatedToolCalls: any[] = [];
     for await (const chunk of stream) {
       const delta = chunk.choices[0]?.delta;
       if (delta?.content) {
@@ -67,7 +65,7 @@ export class ChatHandler {
               id: dtc.id || `tool_${Date.now()}_${index}`,
               type: 'function',
               function: { name: dtc.function?.name || '', arguments: dtc.function?.arguments || '' }
-            } as OpenAI.Chat.Completions.ChatCompletionMessageToolCall;
+            };
           } else {
             if (dtc.function?.name) accumulatedToolCalls[index].function.name = dtc.function.name;
             if (dtc.function?.arguments) accumulatedToolCalls[index].function.arguments += dtc.function.arguments;
@@ -76,8 +74,8 @@ export class ChatHandler {
       }
     }
     if (accumulatedToolCalls.length > 0) {
-      const executedTools = await this.executeToolCalls(accumulatedToolCalls);
-      const finalResponse = await this.generateToolResponse(message, conversationHistory, accumulatedToolCalls, executedTools, systemPrompt);
+      const executedTools = await this.executeToolCalls(accumulatedToolCalls as OpenAI.Chat.Completions.ChatCompletionMessageToolCall[]);
+      const finalResponse = await this.generateToolResponse(message, conversationHistory, accumulatedToolCalls as OpenAI.Chat.Completions.ChatCompletionMessageToolCall[], executedTools, systemPrompt);
       return { content: finalResponse, toolCalls: executedTools };
     }
     return { content: fullContent };
@@ -98,11 +96,15 @@ export class ChatHandler {
   private async executeToolCalls(openAiToolCalls: OpenAI.Chat.Completions.ChatCompletionMessageToolCall[]): Promise<ToolCall[]> {
     return Promise.all(openAiToolCalls.map(async (tc) => {
       try {
-        const args = tc.function.arguments ? JSON.parse(tc.function.arguments) : {};
-        const result = await executeTool(tc.function.name, args);
-        return { id: tc.id, name: tc.function.name, arguments: args, result };
+        const toolCall = tc as any;
+        const name = toolCall.function?.name;
+        const rawArgs = toolCall.function?.arguments;
+        const args = rawArgs ? JSON.parse(rawArgs) : {};
+        const result = await executeTool(name, args);
+        return { id: tc.id, name, arguments: args, result };
       } catch (error) {
-        return { id: tc.id, name: tc.function.name, arguments: {}, result: { error: String(error) } };
+        const toolCall = tc as any;
+        return { id: tc.id, name: toolCall.function?.name || 'unknown', arguments: {}, result: { error: String(error) } };
       }
     }));
   }

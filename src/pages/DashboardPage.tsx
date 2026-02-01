@@ -4,7 +4,7 @@ import { useAgentStore, useAuthStore } from '@/lib/store';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Settings2, Trash2, Cpu, Clock, Search, Sparkles } from 'lucide-react';
+import { Plus, Settings2, Trash2, Cpu, Clock, Search, Sparkles, Activity } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
@@ -33,8 +33,16 @@ export function DashboardPage() {
       <div className="space-y-10 animate-fade-in">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-primary/10 pb-8">
           <div>
-            <div className="flex items-center gap-2 text-primary font-bold text-sm mb-2 uppercase tracking-widest">
-              <Sparkles className="w-4 h-4" /> Vox0-ki Workspace
+            <div className="flex items-center gap-4 text-primary font-bold text-sm mb-2 uppercase tracking-widest">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4" /> 
+                <span>Vox0-ki HQ</span>
+              </div>
+              <div className="h-1 w-1 rounded-full bg-zinc-800" />
+              <div className="flex items-center gap-1.5 text-zinc-500">
+                <Activity className="w-3 h-3 text-green-500" />
+                <span className="text-[10px]">99.9% Uptime</span>
+              </div>
             </div>
             <h1 className="text-4xl font-bold tracking-tight text-white">Welcome, <span className="text-gradient">{userName || 'Builder'}</span></h1>
             <p className="text-zinc-400 mt-1">Orchestrate your fleet of autonomous sovereign intelligences.</p>
@@ -43,7 +51,7 @@ export function DashboardPage() {
             <Plus className="w-5 h-5 mr-2" /> New Vox-Unit
           </Button>
         </div>
-        <div className="flex items-center gap-4 bg-zinc-900/50 p-1.5 rounded-2xl border border-primary/10 backdrop-blur-xl">
+        <div className="flex items-center gap-4 bg-zinc-900/50 p-1.5 rounded-2xl border border-primary/10 backdrop-blur-xl max-w-2xl">
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/60" />
             <Input
@@ -60,15 +68,21 @@ export function DashboardPage() {
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-inner border border-primary/20">
                     <Cpu className="w-6 h-6" />
                   </div>
-                  <Badge className="bg-black border border-primary/40 text-primary hover:bg-primary hover:text-black font-bold px-3">
-                    OPERATIONAL
-                  </Badge>
+                  <div className="flex flex-col items-end gap-1.5">
+                    <Badge className="bg-black border border-primary/40 text-primary hover:bg-primary hover:text-black font-black tracking-widest text-[9px] px-2 py-0.5">
+                      OPERATIONAL
+                    </Badge>
+                    <div className="flex items-center gap-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                      <span className="text-[9px] text-zinc-600 font-bold uppercase">Ready</span>
+                    </div>
+                  </div>
                 </div>
                 <CardTitle className="mt-6 text-xl text-white group-hover:text-primary transition-colors">{agent.name}</CardTitle>
                 <CardDescription className="text-zinc-500 font-medium">{agent.role}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center gap-6 text-xs text-zinc-400 font-mono">
+                <div className="flex items-center gap-6 text-[10px] text-zinc-400 font-mono">
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-primary/60" />
                     {new Date(agent.lastEdited).toLocaleDateString()}
@@ -84,7 +98,7 @@ export function DashboardPage() {
                   variant="ghost"
                   size="sm"
                   onClick={() => navigate(`/builder/${agent.id}`)}
-                  className="flex-1 border border-primary/20 hover:bg-primary hover:text-black font-bold rounded-xl"
+                  className="flex-1 border border-primary/20 hover:bg-primary hover:text-black font-bold rounded-xl transition-all"
                 >
                   Enter Builder
                 </Button>
@@ -113,6 +127,10 @@ export function DashboardPage() {
           </div>
         )}
       </div>
+      <footer className="mt-20 pt-12 border-t border-white/5 text-center space-y-2">
+        <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest">Vox0-ki Platform v1.2.0 • Build ID: f7e2a9b</p>
+        <p className="text-[9px] text-zinc-700 italic">AI capacity is subject to global model constraints. High-priority routing is enabled for this session.</p>
+      </footer>
     </AppLayout>
   );
 }

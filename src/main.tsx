@@ -15,6 +15,11 @@ import { HomePage } from '@/pages/HomePage'
 import { AuthPage } from '@/pages/AuthPage'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { BuilderPage } from '@/pages/BuilderPage'
+import { GalleryPage } from '@/pages/GalleryPage'
+import { VaultPage } from '@/pages/VaultPage'
+import { TuningPage } from '@/pages/TuningPage'
+import { ManualPage } from '@/pages/ManualPage'
+import { SupportPage } from '@/pages/SupportPage'
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
   {
@@ -35,6 +40,31 @@ const router = createBrowserRouter([
   {
     path: "/builder/:id",
     element: <BuilderPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/gallery",
+    element: <GalleryPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/vault",
+    element: <VaultPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/tuning",
+    element: <TuningPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/docs",
+    element: <ManualPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/support",
+    element: <SupportPage />,
     errorElement: <RouteErrorBoundary />,
   },
 ]);

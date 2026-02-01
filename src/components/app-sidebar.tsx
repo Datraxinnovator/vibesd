@@ -45,11 +45,15 @@ export function AppSidebar(): JSX.Element {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild className="rounded-xl h-11 hover:text-primary transition-all">
-                <a href="#" className="flex items-center gap-3">
+              <SidebarMenuButton 
+                asChild 
+                isActive={location.pathname === '/gallery'}
+                className="rounded-xl h-11 data-[active=true]:bg-primary/10 data-[active=true]:text-primary transition-all group"
+              >
+                <Link to="/gallery" className="flex items-center gap-3">
                   <Layers className="size-5" />
                   <span className="font-semibold">Blueprint Gallery</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -59,27 +63,39 @@ export function AppSidebar(): JSX.Element {
           <SidebarGroupLabel className="text-zinc-600 font-bold uppercase tracking-widest text-[10px] px-4">Protocols</SidebarGroupLabel>
           <SidebarMenu className="gap-1">
             <SidebarMenuItem>
-              <SidebarMenuButton asChild className="rounded-xl h-11 hover:text-primary">
-                <a href="#" className="flex items-center gap-3">
+              <SidebarMenuButton 
+                asChild 
+                isActive={location.pathname === '/vault'}
+                className="rounded-xl h-11 data-[active=true]:bg-primary/10 data-[active=true]:text-primary transition-all group"
+              >
+                <Link to="/vault" className="flex items-center gap-3">
                   <Shield className="size-5" />
                   <span className="font-semibold">Security Vault</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild className="rounded-xl h-11 hover:text-primary">
-                <a href="#" className="flex items-center gap-3">
+              <SidebarMenuButton 
+                asChild 
+                isActive={location.pathname === '/tuning'}
+                className="rounded-xl h-11 data-[active=true]:bg-primary/10 data-[active=true]:text-primary transition-all group"
+              >
+                <Link to="/tuning" className="flex items-center gap-3">
                   <Settings className="size-5" />
                   <span className="font-semibold">System Tuning</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild className="rounded-xl h-11 hover:text-primary">
-                <a href="#" className="flex items-center gap-3">
+              <SidebarMenuButton 
+                asChild 
+                isActive={location.pathname === '/docs'}
+                className="rounded-xl h-11 data-[active=true]:bg-primary/10 data-[active=true]:text-primary transition-all group"
+              >
+                <Link to="/docs" className="flex items-center gap-3">
                   <BookOpen className="size-5" />
                   <span className="font-semibold">Tech Manual</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -88,10 +104,14 @@ export function AppSidebar(): JSX.Element {
       <SidebarFooter className="p-6 border-t border-primary/5">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="h-10 hover:bg-zinc-900 rounded-xl">
-              <a href="#" className="flex items-center gap-3 text-zinc-500 hover:text-primary transition-colors">
+            <SidebarMenuButton 
+              asChild 
+              isActive={location.pathname === '/support'}
+              className="h-10 data-[active=true]:bg-primary/10 data-[active=true]:text-primary rounded-xl"
+            >
+              <Link to="/support" className="flex items-center gap-3">
                 <LifeBuoy className="size-4" /> <span className="text-sm font-medium">Concierge Support</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
