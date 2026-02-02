@@ -45,8 +45,9 @@ class ChatService {
       }
       return await response.json();
     } catch (error) {
-      console.error('Failed to send message:', error);
-      return { success: false, error: 'Failed to send message' };
+      const errMsg = error instanceof Error ? error.message : String(error) || 'Unknown network error';
+      console.error('Failed to send message:', errMsg);
+      return { success: false, error: errMsg };
     }
   }
   async updateSystemPrompt(systemPrompt: string): Promise<ChatResponse> {
@@ -142,7 +143,7 @@ export const formatTime = (timestamp: number): string => {
 };
 export const renderToolCall = (toolCall: ToolCall): string => {
   const result = toolCall.result as WeatherResult | MCPResult | ErrorResult | undefined;
-  if (!result) return `���️ ${toolCall.name}: Pending...`;
+  if (!result) return `⏳ ${toolCall.name}: Pending...`;
   if ('error' in result) return `❌ ${toolCall.name}: Error`;
   if ('content' in result) return `🔧 ${toolCall.name}: Success`;
   if (toolCall.name === 'get_weather') {

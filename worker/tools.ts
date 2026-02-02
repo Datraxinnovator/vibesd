@@ -109,7 +109,7 @@ const formatSearchResults = (data: SerpApiResponse, query: string, numResults: n
     : `No results found for "${query}". Try: https://www.google.com/search?q=${encodeURIComponent(query)}`;
 };
 async function performWebSearch(query: string, numResults = 5): Promise<string> {
-  const apiKey = process.env.SERPAPI_KEY;
+  const apiKey: string = ''; // Sandbox: no SERPAPI_KEY, use fallback mock
   if (!apiKey) {
     return `🔍 Web search requires SerpAPI key. Get one at https://serpapi.com/\nFallback: https://www.google.com/search?q=${encodeURIComponent(query)}`;
   }

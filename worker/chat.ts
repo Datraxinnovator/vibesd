@@ -3,14 +3,21 @@ import type { Message, ToolCall, ChatState } from './types';
 import { getToolDefinitions, executeTool } from './tools';
 import { Stream } from 'openai/streaming';
 export class ChatHandler {
-  private client: OpenAI;
+  private client?: OpenAI;
   private model: string;
+  private mockMode: boolean = false;
   constructor(aiGatewayUrl: string, apiKey: string, model: string) {
-    this.client = new OpenAI({
-      baseURL: aiGatewayUrl,
-      apiKey: apiKey
-    });
     this.model = model;
+    this.mockMode = !aiGatewayUrl?.trim() || !apiKey?.trim();
+    if(this.mockMode){
+      console.log('ChatHandler: Sandbox mock mode');
+      return;
+    } else {
+      this.client = new OpenAI({
+        baseURL: aiGatewayUrl,
+        apiKey: apiKey
+      });
+    }
   }
   async processMessage(
     message: string,
@@ -22,6 +29,9 @@ export class ChatHandler {
     toolCalls?: ToolCall[];
   }> {
     const messages = this.buildConversationMessages(message, conversationHistory, agentState?.systemPrompt);
+    if(this.mockMode){
+      return this.handleMockResponse(message, conversationHistory, onChunk, agentState);
+    }
     const allToolDefinitions = await getToolDefinitions();
     const enabledTools = agentState?.enabledTools || [];
     const toolDefinitions = allToolDefinitions.filter(td => enabledTools.includes(td.function.name));
@@ -115,6 +125,9 @@ export class ChatHandler {
     toolResults: ToolCall[],
     systemPrompt?: string
   ): Promise<string> {
+    if (this.mockMode || !this.client) {
+      return `Tools executed successfully. Mock response for ${toolResults.length} tool calls.`;
+    }
     const followUp = await this.client.chat.completions.create({
       model: this.model,
       messages: [
@@ -139,6 +152,31 @@ export class ChatHandler {
       { role: 'user' as const, content: userMessage }
     ];
   }
+  private async handleMockResponse(message: string, conversationHistory: Message[], onChunk?: (chunk: string) => void, agentState?: ChatState): Promise<{content: string; toolCalls?: ToolCall[]}> {
+    let mockContent = `🤖 Vox0-ki Sandbox Mock (Gemini ${this.model})\n\nYour input: ${message.slice(0, 100)}...\n\nActive tools: ${agentState?.enabledTools?.join(', ') || 'none'}\n\nSay 'weather' or 'search' to demo tools.`;
+    const toolCalls: ToolCall[] = [];
+    const lower = message.toLowerCase();
+    if(lower.includes('weather')){
+      const loc = lower.includes('sf')||lower.includes('san') ? 'San Francisco' : 'London';
+      const fakeWeather = {location: loc, temperature: 22 + Math.floor(Math.random()*10), condition: 'Sunny', humidity: 65};
+      toolCalls.push({id: 'mock-weather', name: 'get_weather', arguments: {location: loc}, result: fakeWeather});
+      mockContent += `\n\n✅ Demo tool result: ${JSON.stringify(fakeWeather)};`;
+    } else if(lower.includes('search') || lower.includes('web')){
+      const fakeSearch = {content: `Mock web_search: Found results for '${message}'.\n1. google.com/search?q=${encodeURIComponent(message.slice(0,50))} (top result)\n2. Mock site: relevant info.` };
+      toolCalls.push({id: 'mock-search', name: 'web_search', arguments: {query:message}, result: fakeSearch});
+      mockContent += `\n\n🔍 Demo search complete.`;
+    }
+    if(onChunk){
+      const words = mockContent.split(/\s+/);
+      for(const word of words.slice(0, 150)){ // limit
+        await new Promise(r => setTimeout(r, 20 + Math.random()*30));
+        onChunk(word + ' ');
+      }
+      return {content: mockContent, toolCalls: toolCalls.length ? toolCalls : undefined};
+    }
+    return {content: mockContent, toolCalls: toolCalls.length ? toolCalls : undefined};
+  }
+
   updateModel(newModel: string): void {
     this.model = newModel;
   }

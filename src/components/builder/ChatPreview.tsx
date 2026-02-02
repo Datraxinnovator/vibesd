@@ -46,6 +46,15 @@ export function ChatPreview({ agent }: ChatPreviewProps) {
     setIsTyping(true);
     try {
       const res = await chatService.sendMessage(userMsg.content, agent.model);
+      if (!res.success && res.error) {
+        const errorMsg: Message = {
+          id: crypto.randomUUID(),
+          role: 'assistant' as const,
+          content: `❌ ${res.error}`,
+          timestamp: Date.now()
+        };
+        setMessages(prev => [...prev, errorMsg]);
+      }
       if (res.success) {
         loadMessages();
       }
