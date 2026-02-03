@@ -17,10 +17,11 @@ export class ChatAgent extends Agent<Env, ChatState> {
   };
   async onStart(): Promise<void> {
     console.log(`[AGENT START] Session: ${this.state.sessionId}`);
+    const model = this.state.model;
     this.chatHandler = new ChatHandler(
       this.env.CF_AI_BASE_URL,
       this.env.CF_AI_API_KEY,
-      this.state.model
+      model
     );
   }
   async onRequest(request: Request): Promise<Response> {
@@ -65,8 +66,9 @@ export class ChatAgent extends Agent<Env, ChatState> {
     }
     console.log(`[CHAT] Processing message (${message.length} chars). Model: ${model || this.state.model}. Stream: ${!!stream}`);
     if (model && model !== this.state.model) {
-      this.setState({ ...this.state, model });
-      this.chatHandler?.updateModel(model);
+      const newModel = model;
+      this.setState({ ...this.state, model: newModel });
+      this.chatHandler?.updateModel(newModel);
     }
     if (!this.chatHandler) {
       this.chatHandler = new ChatHandler(this.env.CF_AI_BASE_URL, this.env.CF_AI_API_KEY, this.state.model);
@@ -87,9 +89,10 @@ export class ChatAgent extends Agent<Env, ChatState> {
           console.log(`[STREAM] Initializing neural stream for ${this.state.sessionId}`);
           try {
             this.setState({ ...this.state, streamingMessage: '' });
+            const currentState = this.state;
             const response = await this.chatHandler!.processMessage(
               message,
-              this.state.messages,
+              currentState.messages,
               (chunk: string) => {
                 this.setState({
                   ...this.state,
@@ -97,12 +100,12 @@ export class ChatAgent extends Agent<Env, ChatState> {
                 });
                 writer.write(encoder.encode(chunk)).catch(e => console.error('[STREAM WRITE ERROR]', e));
               },
-              this.state
+              currentState
             );
             const assistantMessage = createMessage('assistant', response.content, response.toolCalls);
             this.setState({
-              ...this.state,
-              messages: [...this.state.messages, assistantMessage],
+              ...currentState,
+              messages: [...currentState.messages, assistantMessage],
               isProcessing: false,
               streamingMessage: ''
             });
@@ -112,8 +115,8 @@ export class ChatAgent extends Agent<Env, ChatState> {
             const errorText = `[Neural Stream Interruption] ${String(error)}`;
             writer.write(encoder.encode(errorText)).catch(() => {});
             this.setState({
-              ...this.state,
-              messages: [...this.state.messages, createMessage('assistant', errorText)],
+              ...currentState,
+              messages: [...currentState.messages, createMessage('assistant', errorText)],
               isProcessing: false,
               streamingMessage: ''
             });
@@ -139,20 +142,32 @@ export class ChatAgent extends Agent<Env, ChatState> {
     this.setState({ ...this.state, messages: [] });
     return Response.json({ success: true, data: this.state });
   }
-  private handleModelUpdate(body: { model: string }): Response {
-    console.log(`[CONFIG] Switching model to ${body.model}`);
-    this.setState({ ...this.state, model: body.model });
-    this.chatHandler?.updateModel(body.model);
+  private handleModelUpdate(body: unknown): Response {
+    const { model } = body as { model: string };
+    if (!model || typeof model !== 'string') {
+      return Response.json({ success: false, error: API_RESPONSES.MISSING_MESSAGE }, { status: 400 });
+    }
+    console.log(`[CONFIG] Switching model to ${model}`);
+    this.setState({ ...this.state, model });
+    this.chatHandler?.updateModel(model);
     return Response.json({ success: true, data: this.state });
   }
-  private handleSystemPromptUpdate(body: { systemPrompt: string }): Response {
-    console.log(`[CONFIG] Updating system prompt (${body.systemPrompt.length} chars)`);
-    this.setState({ ...this.state, systemPrompt: body.systemPrompt });
+  private handleSystemPromptUpdate(body: unknown): Response {
+    const { systemPrompt } = body as { systemPrompt: string };
+    if (!systemPrompt || typeof systemPrompt !== 'string') {
+      return Response.json({ success: false, error: API_RESPONSES.MISSING_MESSAGE }, { status: 400 });
+    }
+    console.log(`[CONFIG] Updating system prompt (${systemPrompt.length} chars)`);
+    this.setState({ ...this.state, systemPrompt });
     return Response.json({ success: true, data: this.state });
   }
-  private handleToolsUpdate(body: { tools: string[] }): Response {
-    console.log(`[CONFIG] Updating enabled tools: ${body.tools.join(', ')}`);
-    this.setState({ ...this.state, enabledTools: body.tools });
+  private handleToolsUpdate(body: unknown): Response {
+    const { tools } = body as { tools: string[] };
+    if (!Array.isArray(tools)) {
+      return Response.json({ success: false, error: API_RESPONSES.MISSING_MESSAGE }, { status: 400 });
+    }
+    console.log(`[CONFIG] Updating enabled tools: ${tools.join(', ')}`);
+    this.setState({ ...this.state, enabledTools: tools });
     return Response.json({ success: true, data: this.state });
   }
 }

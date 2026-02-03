@@ -83,17 +83,19 @@ export class ChatHandler {
           if (dtc.index !== undefined && dtc.index >= 0) {
             const index = dtc.index;
             if (!accumulatedToolCalls[index]) {
-              accumulatedToolCalls[index] = {
-                id: dtc.id || `tool_${Date.now()}_${index}`,
-                type: 'function',
-                function: { 
-                  name: dtc.function?.name ?? '', 
-                  arguments: dtc.function?.arguments ?? '' 
-                }
-              };
+              if ('function' in dtc && dtc.function) {
+                accumulatedToolCalls[index] = {
+                  id: dtc.id || `tool_${Date.now()}_${index}`,
+                  type: 'function',
+                  function: {
+                    name: dtc.function.name ?? '',
+                    arguments: dtc.function.arguments ?? ''
+                  }
+                };
+              }
             } else {
               const functionDelta = dtc.function;
-              if (functionDelta) {
+              if ('function' in dtc && dtc.function && functionDelta) {
                 if (functionDelta.name) accumulatedToolCalls[index].function.name = functionDelta.name;
                 if (functionDelta.arguments) accumulatedToolCalls[index].function.arguments += functionDelta.arguments;
               }
@@ -103,8 +105,9 @@ export class ChatHandler {
       }
     }
     if (accumulatedToolCalls.length > 0) {
-      const toolResults = await this.executeToolCalls(accumulatedToolCalls.filter(Boolean) as OpenAI.Chat.Completions.ChatCompletionMessageToolCall[]);
-      const finalResponse = await this.generateToolResponse(message, conversationHistory, accumulatedToolCalls.filter(Boolean) as OpenAI.Chat.Completions.ChatCompletionMessageToolCall[], toolResults, systemPrompt);
+      const validToolCalls = accumulatedToolCalls.filter(Boolean) as OpenAI.Chat.Completions.ChatCompletionMessageToolCall[];
+      const toolResults = await this.executeToolCalls(validToolCalls);
+      const finalResponse = await this.generateToolResponse(message, conversationHistory, validToolCalls, toolResults, systemPrompt);
       return { content: finalResponse, toolCalls: toolResults };
     }
     return { content: fullContent };
@@ -126,10 +129,13 @@ export class ChatHandler {
   }
   private async executeToolCalls(openAiToolCalls: OpenAI.Chat.Completions.ChatCompletionMessageToolCall[]): Promise<ToolCall[]> {
     return Promise.all(openAiToolCalls.map(async (tc) => {
-      const name = tc.function?.name || 'unknown';
+      if (!tc.function) {
+        return { id: tc.id, name: 'unknown', arguments: {}, result: { error: 'No function defined' } };
+      }
+      const name = tc.function.name || 'unknown';
       try {
-        const rawArgs = tc.function?.arguments;
-        const args = rawArgs ? JSON.parse(rawArgs) : {};
+        const rawArgs = tc.function.arguments || '{}';
+        const args = JSON.parse(rawArgs);
         const result = await executeTool(name, args);
         return { id: tc.id, name, arguments: args, result };
       } catch (error) {
@@ -145,8 +151,11 @@ export class ChatHandler {
     toolResults: ToolCall[],
     systemPrompt?: string
   ): Promise<string> {
-    if (this.mockMode || !this.client) {
+    if (this.mockMode) {
       return `[MOCK MODE] Tools executed: ${toolResults.map(t => t.name).join(', ')}. Logic simulation complete.`;
+    }
+    if (!this.client) {
+      return 'Client not initialized.';
     }
     try {
       const followUp = await this.client.chat.completions.create({
