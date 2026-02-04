@@ -20,6 +20,10 @@ import { VaultPage } from '@/pages/VaultPage'
 import { TuningPage } from '@/pages/TuningPage'
 import { ManualPage } from '@/pages/ManualPage'
 import { SupportPage } from '@/pages/SupportPage'
+import { PricingPage } from '@/pages/PricingPage'
+import { AboutPage } from '@/pages/AboutPage'
+import { PolicyPage } from '@/pages/PolicyPage'
+import { TermsPage } from '@/pages/TermsPage'
 import { Toaster } from '@/components/ui/sonner';
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
@@ -66,6 +70,26 @@ const router = createBrowserRouter([
   {
     path: "/support",
     element: <SupportPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/pricing",
+    element: <PricingPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/about",
+    element: <AboutPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/policy",
+    element: <PolicyPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/terms",
+    element: <TermsPage />,
     errorElement: <RouteErrorBoundary />,
   },
 ]);

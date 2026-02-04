@@ -1,5 +1,5 @@
 import React from "react";
-import { LayoutDashboard, Zap, Settings, LifeBuoy, BookOpen, Layers, Shield } from "lucide-react";
+import { LayoutDashboard, Zap, Settings, LifeBuoy, BookOpen, Layers, Shield, CreditCard, Info, Gavel } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -45,8 +45,8 @@ export function AppSidebar(): JSX.Element {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton 
-                asChild 
+              <SidebarMenuButton
+                asChild
                 isActive={location.pathname === '/gallery'}
                 className="rounded-xl h-11 data-[active=true]:bg-primary/10 data-[active=true]:text-primary transition-all group"
               >
@@ -63,8 +63,8 @@ export function AppSidebar(): JSX.Element {
           <SidebarGroupLabel className="text-zinc-600 font-bold uppercase tracking-widest text-[10px] px-4">Protocols</SidebarGroupLabel>
           <SidebarMenu className="gap-1">
             <SidebarMenuItem>
-              <SidebarMenuButton 
-                asChild 
+              <SidebarMenuButton
+                asChild
                 isActive={location.pathname === '/vault'}
                 className="rounded-xl h-11 data-[active=true]:bg-primary/10 data-[active=true]:text-primary transition-all group"
               >
@@ -75,8 +75,8 @@ export function AppSidebar(): JSX.Element {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton 
-                asChild 
+              <SidebarMenuButton
+                asChild
                 isActive={location.pathname === '/tuning'}
                 className="rounded-xl h-11 data-[active=true]:bg-primary/10 data-[active=true]:text-primary transition-all group"
               >
@@ -87,8 +87,8 @@ export function AppSidebar(): JSX.Element {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton 
-                asChild 
+              <SidebarMenuButton
+                asChild
                 isActive={location.pathname === '/docs'}
                 className="rounded-xl h-11 data-[active=true]:bg-primary/10 data-[active=true]:text-primary transition-all group"
               >
@@ -100,12 +100,54 @@ export function AppSidebar(): JSX.Element {
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
+        <SidebarSeparator className="bg-primary/5 my-4 mx-4" />
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-zinc-600 font-bold uppercase tracking-widest text-[10px] px-4">Corporate</SidebarGroupLabel>
+          <SidebarMenu className="gap-1">
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={location.pathname === '/pricing'}
+                className="rounded-xl h-11 data-[active=true]:bg-primary/10 data-[active=true]:text-primary transition-all group"
+              >
+                <Link to="/pricing" className="flex items-center gap-3">
+                  <CreditCard className="size-5" />
+                  <span className="font-semibold">Intelligence Tiers</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={location.pathname === '/about'}
+                className="rounded-xl h-11 data-[active=true]:bg-primary/10 data-[active=true]:text-primary transition-all group"
+              >
+                <Link to="/about" className="flex items-center gap-3">
+                  <Info className="size-5" />
+                  <span className="font-semibold">Mission Narrative</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={location.pathname === '/policy' || location.pathname === '/terms'}
+                className="rounded-xl h-11 data-[active=true]:bg-primary/10 data-[active=true]:text-primary transition-all group"
+              >
+                <Link to="/policy" className="flex items-center gap-3">
+                  <Gavel className="size-5" />
+                  <span className="font-semibold">Legal Protocols</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="p-6 border-t border-primary/5">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton 
-              asChild 
+            <SidebarMenuButton
+              asChild
               isActive={location.pathname === '/support'}
               className="h-10 data-[active=true]:bg-primary/10 data-[active=true]:text-primary rounded-xl"
             >

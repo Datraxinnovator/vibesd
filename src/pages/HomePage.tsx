@@ -28,8 +28,8 @@ export function HomePage() {
                   Launch Your Forge <ArrowRight className="w-5 h-5" />
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" className="px-10 py-7 text-lg rounded-2xl border-primary/20 bg-black/40 hover:bg-primary/5 hover:border-primary/40 text-primary transition-all">
-                Explore Showcase
+              <Button asChild variant="outline" size="lg" className="px-10 py-7 text-lg rounded-2xl border-primary/20 bg-black/40 hover:bg-primary/5 hover:border-primary/40 text-primary transition-all">
+                <Link to="/pricing">Explore Showcase</Link>
               </Button>
             </div>
           </div>
@@ -55,12 +55,54 @@ export function HomePage() {
           />
         </div>
       </div>
-      <footer className="py-12 border-t border-primary/10 text-center text-sm text-zinc-500 bg-black">
-        <div className="max-w-7xl mx-auto px-4">
-          <p className="font-medium text-primary/80">© 2025 Vox0-ki. The Sovereign AI Workspace.</p>
-          <p className="mt-2 text-xs opacity-50">
-            AI capacity is subject to global availability. High-priority routing enabled for pro members.
-          </p>
+      {/* Corporate Footer */}
+      <footer className="bg-zinc-950 border-t border-primary/10 pt-20 pb-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
+            <div className="col-span-2 md:col-span-1 space-y-6">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-black">
+                  <Zap className="w-5 h-5" />
+                </div>
+                <span className="text-xl font-bold tracking-tighter text-white">Vox0-ki</span>
+              </div>
+              <p className="text-sm text-zinc-500 leading-relaxed">
+                The sovereign workspace for high-performance intelligence architecting.
+              </p>
+            </div>
+            <div>
+              <h4 className="text-xs font-black uppercase tracking-widest text-primary mb-6">Product</h4>
+              <ul className="space-y-4 text-sm text-zinc-400">
+                <li><Link to="/login" className="hover:text-primary transition-colors">Forge Studio</Link></li>
+                <li><Link to="/gallery" className="hover:text-primary transition-colors">Blueprint Gallery</Link></li>
+                <li><Link to="/pricing" className="hover:text-primary transition-colors">Pricing Tiers</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-xs font-black uppercase tracking-widest text-primary mb-6">Company</h4>
+              <ul className="space-y-4 text-sm text-zinc-400">
+                <li><Link to="/about" className="hover:text-primary transition-colors">Our Narrative</Link></li>
+                <li><Link to="/support" className="hover:text-primary transition-colors">Concierge Support</Link></li>
+                <li><Link to="/docs" className="hover:text-primary transition-colors">Tech Manual</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-xs font-black uppercase tracking-widest text-primary mb-6">Legal</h4>
+              <ul className="space-y-4 text-sm text-zinc-400">
+                <li><Link to="/policy" className="hover:text-primary transition-colors">Privacy Protocol</Link></li>
+                <li><Link to="/terms" className="hover:text-primary transition-colors">Terms of Execution</Link></li>
+                <li><Link to="/policy" className="hover:text-primary transition-colors">Cookie Policy</Link></li>
+              </ul>
+            </div>
+          </div>
+          <div className="pt-12 border-t border-white/5 text-center">
+            <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest">
+              © 2025 VOX0-KI INTELLIGENCE SYSTEMS. ALL RIGHTS RESERVED.
+            </p>
+            <p className="mt-2 text-[9px] text-zinc-700 italic">
+              AI capacity is subject to global availability. High-priority routing enabled for pro members.
+            </p>
+          </div>
         </div>
       </footer>
     </div>
