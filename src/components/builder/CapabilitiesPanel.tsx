@@ -24,7 +24,7 @@ function SortableToolItem({ tool, isEnabled, onToggle }: { tool: ToolDef, isEnab
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: tool.id });
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: transition || 'transform 200ms cubic-bezier(0.2, 0, 0, 1)',
     zIndex: transform ? 50 : 'auto'
   };
   return (
@@ -48,7 +48,7 @@ function SortableToolItem({ tool, isEnabled, onToggle }: { tool: ToolDef, isEnab
             <GripVertical className="w-4 h-4" />
           </div>
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-colors ${
-            isEnabled ? 'bg-primary/20 text-primary border-primary/40' : 'bg-zinc-900 text-zinc-600 border-zinc-800'
+            isEnabled ? 'bg-primary/20 text-primary border-primary/40 shadow-[0_0_10px_rgba(255,215,0,0.2)]' : 'bg-zinc-900 text-zinc-600 border-zinc-800'
           }`}>
             {tool.icon}
           </div>
@@ -56,7 +56,7 @@ function SortableToolItem({ tool, isEnabled, onToggle }: { tool: ToolDef, isEnab
             <div className="flex items-center gap-2">
               <Label htmlFor={tool.id} className="font-bold text-white block truncate cursor-pointer">{tool.name}</Label>
               {isEnabled && (
-                <span className="flex items-center gap-1 text-[8px] font-black bg-primary text-black px-1.5 py-0.5 rounded-sm animate-pulse">
+                <span className="flex items-center gap-1 text-[8px] font-black bg-primary text-black px-1.5 py-0.5 rounded-sm animate-pulse shadow-[0_0_8px_rgba(255,215,0,0.6)]">
                   ACTIVE
                 </span>
               )}
@@ -75,15 +75,14 @@ function SortableToolItem({ tool, isEnabled, onToggle }: { tool: ToolDef, isEnab
   );
 }
 export function CapabilitiesPanel({ agent }: { agent: AgentConfig }) {
-  // Correctly handle store calls to prevent re-render loops and selector errors
   const updateAgent = useAgentStore((s) => s.updateAgent);
-  // Initialize sensors separately to stabilize hook calls
-  const pointerSensor = useSensor(PointerSensor);
+  const pointerSensor = useSensor(PointerSensor, {
+    activationConstraint: { distance: 8 }
+  });
   const keyboardSensor = useSensor(KeyboardSensor, {
     coordinateGetter: sortableKeyboardCoordinates,
   });
   const sensors = useSensors(pointerSensor, keyboardSensor);
-  // Synchronize tools with chat service
   useEffect(() => {
     if (agent?.tools) {
       chatService.updateTools(agent.tools);
@@ -105,9 +104,9 @@ export function CapabilitiesPanel({ agent }: { agent: AgentConfig }) {
   };
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
-    if (active.id !== over?.id) {
+    if (over && active.id !== over.id) {
       const oldIndex = agent.tools.indexOf(active.id as string);
-      const newIndex = agent.tools.indexOf(over?.id as string);
+      const newIndex = agent.tools.indexOf(over.id as string);
       if (oldIndex !== -1 && newIndex !== -1) {
         updateAgent(agent.id, { tools: arrayMove(agent.tools, oldIndex, newIndex) });
         toast.info('Intelligence stack re-prioritized.');
@@ -152,11 +151,12 @@ export function CapabilitiesPanel({ agent }: { agent: AgentConfig }) {
         <div className="flex items-center gap-2 text-zinc-600 font-black text-[10px] uppercase tracking-[0.3em] mb-6">
           <Code className="w-3 h-3" /> Custom Protocols
         </div>
-        <div className="p-8 rounded-3xl border border-dashed border-primary/10 bg-zinc-950/40 text-center group cursor-not-allowed">
+        <div className="p-8 rounded-3xl border border-dashed border-primary/10 bg-zinc-950/40 text-center group cursor-not-allowed transition-colors hover:bg-primary/5">
           <div className="w-12 h-12 rounded-full bg-zinc-900 flex items-center justify-center mx-auto mb-4 text-zinc-700">
             <Plus className="w-6 h-6" />
           </div>
           <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest">Enterprise API Connector</p>
+          <p className="text-[9px] text-zinc-700 mt-2">COMING SOON</p>
         </div>
       </div>
     </div>

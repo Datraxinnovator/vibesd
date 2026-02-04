@@ -168,15 +168,29 @@ export class ChatHandler {
     ];
   }
   private async handleMockResponse(message: string, conversationHistory: Message[], onChunk?: (chunk: string) => void, agentState?: ChatState): Promise<{content: string; toolCalls?: ToolCall[]}> {
-    let mockContent = `[Vox0-ki Neural Link: Sandbox Mode]\n\nDirective received. Syncing with model ${this.model}...\n\nSovereign protocols verified.`;
+    const msg = message.toLowerCase();
+    let mockContent = `[Vox0-ki Neural Link: Sandbox Mode]\n\nDirective received for unit ${agentState?.sessionId?.slice(0, 8) || 'SOVEREIGN'}.\nExecuting using protocol ${this.model}...\n\n`;
     const toolCalls: ToolCall[] = [];
-    if (message.toLowerCase().includes('weather')) {
-      toolCalls.push({ id: 'm-1', name: 'get_weather', arguments: { location: 'San Francisco' }, result: { temperature: 22, condition: 'Clear' } });
+    if (msg.includes('weather')) {
+      toolCalls.push({ id: 'm-w-1', name: 'get_weather', arguments: { location: 'San Francisco' }, result: { location: 'San Francisco', temperature: 22, condition: 'Clear', humidity: 45 } });
+      mockContent += "Atmospheric data retrieved successfully. Conditions are optimal for execution.";
+    } else if (msg.includes('search') || msg.includes('oracle')) {
+      toolCalls.push({ id: 'm-s-1', name: 'web_search', arguments: { query: message }, result: { content: "Top results indicate that Vox0-ki is the leading platform for sovereign AI development. Industry trends show a move towards autonomous agentic workflows at the edge." } });
+      mockContent += "Web Oracle synchronized. Knowledge graph updated with real-time intelligence.";
+    } else if (msg.includes('d1') || msg.includes('database') || msg.includes('matrix')) {
+      toolCalls.push({ id: 'm-d-1', name: 'd1_db', arguments: { query: 'SELECT * FROM intelligence_ledger' }, result: { content: "✅ D1 Matrix synchronization successful. Query processed. Transaction Hash: 0xMOCK-LE-777." } });
+      mockContent += "D1 Matrix query executed. Persistent ledger updated across 310+ nodes.";
+    } else if (msg.includes('mcp') || msg.includes('bridge')) {
+      toolCalls.push({ id: 'm-m-1', name: 'mcp_server', arguments: { action: 'call', endpoint: 'external-protocol-v1' }, result: { content: "⚡ MCP Bridge active. Tunnel established via sovereign gateway." } });
+      mockContent += "MCP Bridge protocol initialized. External system handshake complete.";
+    } else {
+      mockContent += "Directive processed. Sovereign protocols verified. Intelligence stream established.";
     }
     if (onChunk) {
-      for (const char of mockContent) {
-        await new Promise(r => setTimeout(r, 5));
-        onChunk(char);
+      const words = mockContent.split(' ');
+      for (const word of words) {
+        await new Promise(r => setTimeout(r, 40)); // Simulated neural latency
+        onChunk(word + ' ');
       }
     }
     return { content: mockContent, toolCalls: toolCalls.length ? toolCalls : undefined };

@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 export function DashboardPage() {
-  const agents = useAgentStore((s) => s.agents);
+  const agents = useAgentStore((s) => s.agents) ?? [];
   const addAgent = useAgentStore((s) => s.addAgent);
   const deleteAgent = useAgentStore((s) => s.deleteAgent);
   const user = useAuthStore((s) => s.user);
@@ -17,17 +17,22 @@ export function DashboardPage() {
   const userName = user?.name || 'Builder';
   const handleCreateAgent = () => {
     const id = crypto.randomUUID();
+    const unitTag = Math.floor(1000 + Math.random() * 9000);
     addAgent({
       id,
-      name: 'New Vox-Unit',
+      name: `Vox-Unit-${unitTag}`,
       role: 'Intelligence Officer',
-      systemPrompt: 'You are a Vox0-ki Intelligence Engine.',
-      model: 'google-ai-studio/gemini-2.5-flash',
+      systemPrompt: 'You are a Vox0-ki Intelligence Engine. Execute directives with extreme precision.',
+      model: 'google-ai-studio/gemini-2.0-flash',
       tools: [],
       lastEdited: Date.now(),
     });
-    toast.success('Vox-Unit initialized in the forge');
+    toast.success(`Unit ${unitTag} initialized in the forge`);
     navigate(`/builder/${id}`);
+  };
+  const handleDelete = (id: string, name: string) => {
+    deleteAgent(id);
+    toast.info(`Vox-Unit "${name}" successfully decommissioned from ledger.`);
   };
   return (
     <AppLayout container className="bg-black">
@@ -57,16 +62,16 @@ export function DashboardPage() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/60" />
             <Input
               placeholder="Filter by unit name or role..."
-              className="pl-12 bg-transparent border-none focus-visible:ring-0 text-white placeholder:text-zinc-600"
+              className="pl-12 bg-transparent border-none focus-visible:ring-0 text-white placeholder:text-zinc-600 h-11"
             />
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {agents.map((agent) => (
-            <Card key={agent.id} className="group overflow-hidden border-primary/10 bg-zinc-950/40 backdrop-blur-md hover:border-primary/40 hover:shadow-glow transition-all duration-300">
+            <Card key={agent.id} className="group overflow-hidden border-primary/10 bg-zinc-950/40 backdrop-blur-md hover:border-primary/40 hover:shadow-glow transition-all duration-300 flex flex-col">
               <CardHeader className="pb-4">
                 <div className="flex items-start justify-between">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-inner border border-primary/20">
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-inner border border-primary/20 group-hover:bg-primary/20 transition-colors">
                     <Cpu className="w-6 h-6" />
                   </div>
                   <div className="flex flex-col items-end gap-1.5">
@@ -79,10 +84,10 @@ export function DashboardPage() {
                     </div>
                   </div>
                 </div>
-                <CardTitle className="mt-6 text-xl text-white group-hover:text-primary transition-colors">{agent.name}</CardTitle>
-                <CardDescription className="text-zinc-500 font-medium">{agent.role}</CardDescription>
+                <CardTitle className="mt-6 text-xl text-white group-hover:text-primary transition-colors truncate">{agent.name}</CardTitle>
+                <CardDescription className="text-zinc-500 font-medium truncate">{agent.role}</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 flex-1">
                 <div className="flex items-center gap-6 text-[10px] text-zinc-400 font-mono">
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-primary/60" />
@@ -99,18 +104,15 @@ export function DashboardPage() {
                   variant="ghost"
                   size="sm"
                   onClick={() => navigate(`/builder/${agent.id}`)}
-                  className="flex-1 border border-primary/20 hover:bg-primary hover:text-black font-bold rounded-xl transition-all"
+                  className="flex-1 border border-primary/20 hover:bg-primary hover:text-black font-bold rounded-xl transition-all h-10"
                 >
                   Enter Builder
                 </Button>
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => {
-                    deleteAgent(agent.id);
-                    toast.info('Unit decommissioned');
-                  }}
-                  className="text-zinc-500 hover:text-red-500 hover:bg-red-500/10 rounded-xl"
+                  onClick={() => handleDelete(agent.id, agent.name)}
+                  className="text-zinc-500 hover:text-red-500 hover:bg-red-500/10 rounded-xl w-10 h-10"
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
@@ -124,12 +126,12 @@ export function DashboardPage() {
               <Cpu className="w-10 h-10" />
             </div>
             <p className="text-zinc-500 text-lg font-medium">Your forge is currently silent.</p>
-            <Button variant="link" onClick={handleCreateAgent} className="text-primary mt-2">Initialize your first unit →</Button>
+            <Button variant="link" onClick={handleCreateAgent} className="text-primary mt-2 font-bold uppercase tracking-widest text-xs">Initialize your first unit →</Button>
           </div>
         )}
       </div>
-      <footer className="mt-20 pt-12 border-t border-white/5 text-center space-y-2">
-        <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest">Vox0-ki Platform v1.2.0 �� Build ID: f7e2a9b</p>
+      <footer className="mt-20 pt-12 border-t border-white/5 text-center space-y-2 opacity-60 hover:opacity-100 transition-opacity">
+        <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest">Vox0-ki Platform v1.2.0 • Build ID: f7e2a9b</p>
         <p className="text-[9px] text-zinc-700 italic">AI capacity is subject to global model constraints. High-priority routing is enabled for this session.</p>
       </footer>
     </AppLayout>
