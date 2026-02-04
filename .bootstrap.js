@@ -82,7 +82,8 @@ function runSetupCommands() {
     "bun add canvas-confetti@^1.9.3",
     "bun add canvas-confetti",
     "bun add zod @hookform/resolvers",
-    "bun add react-resizable-panels"
+    "bun add react-resizable-panels",
+    "bun add lucide-react"
 ];
     
     if (commands.length === 0) {
