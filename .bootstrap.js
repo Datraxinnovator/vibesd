@@ -81,7 +81,8 @@ function runSetupCommands() {
     "bun add @dnd-kit/utilities@^3.2.2",
     "bun add canvas-confetti@^1.9.3",
     "bun add canvas-confetti",
-    "bun add zod @hookform/resolvers"
+    "bun add zod @hookform/resolvers",
+    "bun add react-resizable-panels"
 ];
     
     if (commands.length === 0) {
