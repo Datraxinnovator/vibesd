@@ -1,5 +1,6 @@
 import { Hono } from "hono";
-import { getAgentByName } from 'agents';import { ChatAgent } from './agent';
+import { getAgentByName } from 'agents';
+import { ChatAgent } from './agent';
 import { API_RESPONSES } from './config';
 import { Env, getAppController, registerSession, unregisterSession } from "./core-utils";
 export { API_RESPONSES };
@@ -9,15 +10,10 @@ export { API_RESPONSES };
 export function coreRoutes(app: Hono<{ Bindings: Env }>) {
     // Use this API for conversations. **DO NOT MODIFY**
     app.all('/api/chat/:sessionId/*', async (c) => {
-        const bodySz = c.req.header('content-length') || '0';
-        const path = new URL(c.req.url).pathname;
         const sessionId = c.req.param('sessionId') || '';
-        console.log(`REQ CORE: ${c.req.method} ${path} bodySz ${bodySz} session ${sessionId}`);
         try {
-        console.log('CHAT ROUTE HIT session=' + sessionId);
         const agent = await getAgentByName<Env, ChatAgent>(c.env.CHAT_AGENT, sessionId); // Get existing agent or create a new one if it doesn't exist, with sessionId as the name
-        console.log('AGENT READY session=' + sessionId);
-        
+
         let bodyInit: BodyInit | undefined = undefined;
         const headers = new Headers(c.req.header());
         if (c.req.method !== 'GET' && c.req.method !== 'DELETE') {
@@ -53,11 +49,6 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
     // Add your routes here
     app.post('/api/chat/:sessionId/chat', async (c) => {
         const sessionId = c.req.param('sessionId');
-        const bodySz = c.req.header('content-length') || '0';
-        const path = new URL(c.req.url).pathname;
-        console.log(`REQ: ${c.req.method} ${path} bodySz ${bodySz} session ${sessionId}`);
-        const bodyX = await c.req.text().catch(()=> '{}');
-        console.log(`POST /chat body ${bodyX} session ${sessionId}`);
         return c.json({
             success: true,
             data: {
