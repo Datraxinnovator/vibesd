@@ -27,9 +27,7 @@ export function ChatPreview({ agent }: ChatPreviewProps) {
   }, [messages, isTyping]);
   const loadMessages = async () => {
     const res = await chatService.getMessages();
-    if (res.success && res.data) {
-      setMessages(res.data.messages || []);
-    }
+    setMessages(res.data?.messages || []);
   };
   const handleSend = async (e?: React.FormEvent) => {
     e?.preventDefault();

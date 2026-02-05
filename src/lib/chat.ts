@@ -55,7 +55,26 @@ class ChatService {
         }
         return { success: true };
       } else {
-        return await response.json();
+        try {
+          const json = await response.json();
+          if (json.success === true) {
+            const data: ChatState = {
+              messages: (json.data?.messages || []),
+              sessionId: json.sessionId || this.sessionId || '',
+              isProcessing: (json.isProcessing ?? false),
+              streamingMessage: (json.streamingMessage ?? ''),
+              model: (json.model ?? 'google-ai-studio/gemini-1.5-flash'),
+              systemPrompt: (json.systemPrompt ?? 'Neural link stable - mock safety mode.'),
+              enabledTools: (json.enabledTools ?? [])
+            };
+            return { success: true, data };
+          } else {
+            return { success: false, error: json.error || json.message || 'Unknown server error' };
+          }
+        } catch (jsonError) {
+          console.error('sendMessage JSON parse error:', jsonError);
+          return { success: false, error: 'Invalid response format' };
+        }
       }
     } catch (error) {
       console.error('sendMessage fetch exception:', error);
@@ -70,7 +89,13 @@ class ChatService {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ systemPrompt }),
       });
-      return await res.json();
+      try {
+        const json = await res.json();
+        return json.success === true ? { success: true, data: json.data || {} } : { success: false, error: json.error || 'Sync failed' };
+      } catch (jsonError) {
+        console.error('updateSystemPrompt JSON error:', jsonError);
+        return { success: false, error: 'Sync failed' };
+      }
     } catch (e) {
       return { success: false, error: 'Sync failed' };
     }
@@ -83,7 +108,13 @@ class ChatService {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tools }),
       });
-      return await res.json();
+      try {
+        const json = await res.json();
+        return json.success === true ? { success: true, data: json.data || {} } : { success: false, error: json.error || 'Tool sync failed' };
+      } catch (jsonError) {
+        console.error('updateTools JSON error:', jsonError);
+        return { success: false, error: 'Tool sync failed' };
+      }
     } catch (e) {
       return { success: false, error: 'Tool sync failed' };
     }
@@ -100,7 +131,30 @@ class ChatService {
         console.error('getMessages endpoint error:', response.status, errorText);
         return { success: false, error: 'Logs unavailable' };
       }
-      return await response.json();
+      try {
+        const json = await response.json();
+        let messages = [];
+        if (Array.isArray(json)) {
+          messages = json;
+        } else if (json.data?.messages) {
+          messages = json.data.messages;
+        } else if (json.messages) {
+          messages = json.messages;
+        }
+        const data: ChatState = {
+          messages: (messages || []),
+          sessionId: json.sessionId || this.sessionId || '',
+          isProcessing: (json.isProcessing ?? false),
+          streamingMessage: (json.streamingMessage ?? ''),
+          model: (json.model ?? 'google-ai-studio/gemini-1.5-flash'),
+          systemPrompt: (json.systemPrompt ?? 'Neural link stable - mock safety mode.'),
+          enabledTools: (json.enabledTools ?? [])
+        };
+        return { success: true, data };
+      } catch (jsonError) {
+        console.error('getMessages JSON parse error:', jsonError);
+        return { success: false, error: 'Invalid response format or empty messages' };
+      }
     } catch (e) {
       console.error('getMessages fetch exception:', e);
       return { success: false, error: 'Logs unavailable' };
@@ -110,7 +164,13 @@ class ChatService {
   async clearMessages(): Promise<ChatResponse> {
     try {
       const response = await fetch(`${this.baseUrl}/clear`, { method: 'DELETE' });
-      return await response.json();
+      try {
+        const json = await response.json();
+        return json.success === true ? { success: true, data: json.data || {} } : { success: false, error: json.error || 'Wipe failed' };
+      } catch (jsonError) {
+        console.error('clearMessages JSON error:', jsonError);
+        return { success: false, error: 'Wipe failed' };
+      }
     } catch (e) {
       return { success: false, error: 'Wipe failed' };
     }
@@ -142,7 +202,13 @@ class ChatService {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ model })
       });
-      return await res.json();
+      try {
+        const json = await res.json();
+        return json.success === true ? { success: true, data: json.data || {} } : { success: false, error: json.error || 'Model switch failed' };
+      } catch (jsonError) {
+        console.error('updateModel JSON error:', jsonError);
+        return { success: false, error: 'Model switch failed' };
+      }
     } catch (e) {
       return { success: false, error: 'Model switch failed' };
     }
