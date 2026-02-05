@@ -24,14 +24,17 @@ class ChatService {
     onChunk?: (chunk: string) => void
   ): Promise<ChatResponse> {
     try {
-      console.log('Sending to', this.baseUrl, JSON.stringify({message}));
+      const fullUrl = `${this.baseUrl}/chat`;
+      console.log('Sending agent.id', this.sessionId, 'fullUrl', fullUrl, 'body', JSON.stringify({ message, model, stream: !!onChunk }));
       const response = await fetch(`${this.baseUrl}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message, model, stream: !!onChunk }),
       });
+      console.log('Chat POST response status:', response.status, response.ok ? 'OK' : 'FAILED');
       if (!response.ok) {
         const errorText = await response.text();
+        console.error('Chat endpoint error:', response.status, errorText);
         return {
           success: false,
           error: `Neural link disrupted (${response.status}). Verify your gateway protocols.`
@@ -51,9 +54,11 @@ class ChatService {
           reader.releaseLock();
         }
         return { success: true };
+      } else {
+        return await response.json();
       }
-      return await response.json();
     } catch (error) {
+      console.error('sendMessage fetch exception:', error);
       return { success: false, error: 'Protocol transmission failure. Check network connectivity.' };
     }
   }
@@ -86,9 +91,18 @@ class ChatService {
   /** Retrieves neural logs for the current session */
   async getMessages(): Promise<ChatResponse> {
     try {
-      const response = await fetch(`${this.baseUrl}/messages`);
+      const fullUrl = `${this.baseUrl}/messages`;
+      console.log('Fetching messages URL:', fullUrl);
+      const response = await fetch(fullUrl);
+      console.log('getMessages response status:', response.status, response.ok ? 'OK' : 'FAILED');
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('getMessages endpoint error:', response.status, errorText);
+        return { success: false, error: 'Logs unavailable' };
+      }
       return await response.json();
     } catch (e) {
+      console.error('getMessages fetch exception:', e);
       return { success: false, error: 'Logs unavailable' };
     }
   }
